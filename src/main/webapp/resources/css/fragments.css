@@ -1,0 +1,17 @@
+@font-face {
+	font-family: open-sans-regular;
+	src: url(../fonts/open-sans-regular.ttf);
+}
+
+.footer {
+	padding-top: 15px;
+	padding-bottom: 5px;
+	background-color: #BB0B20;
+	}
+
+.footer p {
+	font-family: open-sans-regular;
+	color: white;
+	text-align: center;
+}
+
