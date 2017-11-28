@@ -7,37 +7,35 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hazfutbol.tournaments.bean.TeamPlayer;
-import com.hazfutbol.tournaments.dao.TeamPlayerDAO;
+import com.hazfutbol.tournaments.bean.City;
+import com.hazfutbol.tournaments.dao.CityDAO;
 import com.hazfutbol.tournaments.util.MySqlConnection;
 
-public class TeamPlayerDAOImpl implements TeamPlayerDAO {
+public class CityDAOImpl implements CityDAO {
 
 	@Override
-	public List<TeamPlayer> listTeamPlayerOptions() {
+	public List<City> listCities() {
 
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement preparedStatement = null;
-		List<TeamPlayer> teamPlayerOptions = null;
+		List<City> cities = null;
 
 		try {
 			connection = MySqlConnection.getConnection();
 
-			String query = "SELECT team_player_id, quantity, name " + "FROM hf_team_player "
-					+ "WHERE status = 1 ORDER BY quantity asc;";
+			String query = "select city_id, province_id, city_name from hf_city;";
 
 			preparedStatement = connection.prepareStatement(query);
+
+			cities = new ArrayList<City>();
 			resultSet = preparedStatement.executeQuery();
-
-			teamPlayerOptions = new ArrayList<>();
 			while (resultSet.next()) {
-				TeamPlayer teamPlayerOption = new TeamPlayer();
-				teamPlayerOption.setTeamPlayerId(resultSet.getInt("team_player_id"));
-				teamPlayerOption.setQuantity(resultSet.getInt("quantity"));
-				teamPlayerOption.setName(resultSet.getString("name"));
-
-				teamPlayerOptions.add(teamPlayerOption);
+				City city = new City();
+				city.setCityId(resultSet.getInt("city_id"));
+				city.setProvinceId(resultSet.getInt("province_id"));
+				city.setCityName(resultSet.getString("city_name"));
+				cities.add(city);
 			}
 			connection.close();
 		} catch (SQLException e) {
@@ -54,7 +52,7 @@ public class TeamPlayerDAOImpl implements TeamPlayerDAO {
 				e.printStackTrace();
 			}
 		}
-		return teamPlayerOptions;
+		return cities;
 	}
 
 }

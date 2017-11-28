@@ -7,4 +7,6 @@ import com.hazfutbol.tournaments.bean.Complex;
 public interface ComplexDAO {
 
 	List<Complex> listComplexes();
+	
+	List<String> listComplexesNames();
 }

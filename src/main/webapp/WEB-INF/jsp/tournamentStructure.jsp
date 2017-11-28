@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -23,62 +24,73 @@
 				<button type="button" class="btn btn-default">Guardar</button>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-2 col-md-offset-1">
-				Fase 1: <input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				Modalidad: <select class="form-control">
-					<option>Grupos</option></select>
-			</div>
-			<div class="col-md-2">
-				# Equipos: <input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				# Clasificados:<input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				Arrastra Tarjetas? <select class="form-control">
-					<option>Sí</option>
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-2 col-md-offset-1">
-				Fase 2: <input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				Modalidad: <select class="form-control">
-					<option>Grupos</option></select>
-			</div>
-			<div class="col-md-2">
-				# Equipos: <input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				# Clasificados:<input type="text" class="form-control">
-			</div>
-			<div class="col-md-2">
-				Arrastra Tarjetas? <select class="form-control">
-					<option>Sí</option>
-				</select>
+		<div id="divPhases" class="row">
+			<div class="col-md-12">
+				<c:forEach items="${tournamentPhases}" var="tournamentPhase">
+					<div class="row">
+						<span class="nIdPhaseTournament" style="display: none;">${tournamentPhase.phase.nIdPhaseTournament}</span>
+						<div class="col-md-2 col-md-offset-1">
+							Fase ${tournamentPhase.phase.nIndexPhaseByTournament}: <input
+								type="text" class="form-control cNamePhaseTournament"
+								value="${tournamentPhase.phase.cNamePhaseTournament}">
+						</div>
+						<div class="col-md-2">
+							Modalidad: <select class="form-control" class="stageType">
+								<option value="1"
+									${tournamentPhase.stageType == 1 ? 'selected' : ''}>Grupos</option>
+								<option value="2"
+									${tournamentPhase.stageType == 2 ? 'selected' : ''}>Playoff</option>
+							</select>
+						</div>
+						<div class="col-md-2">
+							# Equipos: <input type="text" class="form-control"
+								class="nQuantityTeams"
+								value="${tournamentPhase.phase.nQuantityGroupsPhase * tournamentPhase.phase.nQuantityTeamsByGroupPhase}">
+						</div>
+						<div class="col-md-2">
+							# Clasificados:<input type="text" class="form-control"
+								class="nQuantityWinnersPhase"
+								value="${tournamentPhase.phase.nQuantityWinnersPhase}">
+						</div>
+						<div class="col-md-1">
+							Arrastra Tarjetas? <select class="form-control" class="dragCards">
+								<option value="no"
+									${tournamentPhase.dragCards == 'no' ? 'selected' : ''}>No</option>
+								<option value="yes"
+									${tournamentPhase.dragCards == 'yes' ? 'selected' : ''}>Sí</option>
+							</select>
+						</div>
+						<div class="col-md-1">
+							Arrastra Suspensiones? <select class="form-control"
+								class="dragSuspensions">
+								<option value="no"
+									${tournamentPhase.dragSuspensions == 'no' ? 'selected' : ''}>No</option>
+								<option value="yes"
+									${tournamentPhase.dragSuspensions == 'yes' ? 'selected' : ''}>Sí</option>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							Comentario (*):
+							<textarea class="form-control" rows="3" class="cDescriptionPhase">${tournamentPhase.phase.cDescriptionPhase}</textarea>
+						</div>
+					</div>
+					<script type="text/javascript">
+						var lastPhase = ${tournamentPhase.phase.nIndexPhaseByTournament};
+					</script>
+				</c:forEach>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12 ">
-				<button type="button" class="btn btn-default center-block">Agregar
-					Fase</button>
-			</div>
-
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				Comentario (*):
-				<textarea class="form-control" rows="3"></textarea>
+				<button id="btnAddPhase" type="button"
+					class="btn btn-default center-block">Agregar Fase</button>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-1 pull-right">
-				<button type="button" class="btn btn-default">Guardar</button>
+				<button type="button" class="btn btn-default btnSave">Guardar</button>
 			</div>
 		</div>
 		<div class="row">

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.hazfutbol.tournaments.bean.City;
 import com.hazfutbol.tournaments.bean.Complex;
 import com.hazfutbol.tournaments.bean.FieldType;
 import com.hazfutbol.tournaments.bean.FootballCategory;
@@ -20,7 +21,7 @@ import com.hazfutbol.tournaments.bean.TeamPlayer;
 import com.hazfutbol.tournaments.service.TournamentManagerService;
 import com.hazfutbol.tournaments.service.TournamentService;
 
-@Controller
+@Controller																																				
 public class tournamentController {
 
 	TournamentManagerService tournamentManagerService = new TournamentManagerService();
@@ -47,6 +48,7 @@ public class tournamentController {
 		List<FieldType> fieldTypes = tournamentService.listFieldTypes();
 		List<InscriptionType> inscriptionTypes = tournamentService.listInscriptionTypes();
 		List<Complex> complexes = tournamentService.listComplexes();
+		List<City> cities = tournamentService.listCities();
 		
 		modelAndView.setViewName("tournamentSetUp");
 		modelAndView.addObject("tournament", tournament);
@@ -55,6 +57,7 @@ public class tournamentController {
 		modelAndView.addObject("fieldTypes", fieldTypes);
 		modelAndView.addObject("inscriptionTypes", inscriptionTypes);
 		modelAndView.addObject("complexes", complexes);
+		modelAndView.addObject("cities", cities);
 		
 		return modelAndView;
 	}
@@ -81,9 +84,13 @@ public class tournamentController {
 	}
 
 	@RequestMapping(value = "/tournamentStructure", method = RequestMethod.GET)
-	public ModelAndView tournamentStructure() {
+	public ModelAndView tournamentStructure(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
+		int nIdTournament =(int) request.getSession().getAttribute("nIdTournament");
+		List<Map<String, Object>> tournamentPhases = tournamentService.listPhasesByTornament(nIdTournament);
+		
 		modelAndView.setViewName("tournamentStructure");
+		modelAndView.addObject("tournamentPhases", tournamentPhases);
 		return modelAndView;
 	}
 

@@ -16,16 +16,20 @@ public class InscriptionTypeDAOImpl implements InscriptionTypeDAO {
 	@Override
 	public List<InscriptionType> listInscriptionTypes() {
 
-		Connection connection = MySqlConnection.getConnection();
+		Connection connection = null;
+		ResultSet resultSet = null;
+		PreparedStatement preparedStatement = null;
 		List<InscriptionType> inscriptionTypes = null;
 
 		try {
+			connection = MySqlConnection.getConnection();
+
 			String query = "SELECT n_id_inscription_type, c_name_inscription_type, "
 					+ "c_description_inscription_type, c_status_inscription_type "
 					+ "FROM hf_tournament_inscription_type " + "WHERE c_status_inscription_type = 'visible';";
 
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement = connection.prepareStatement(query);
+			resultSet = preparedStatement.executeQuery();
 
 			inscriptionTypes = new ArrayList<>();
 			while (resultSet.next()) {
@@ -34,12 +38,23 @@ public class InscriptionTypeDAOImpl implements InscriptionTypeDAO {
 				inscriptionType.setcNameInscriptionType(resultSet.getString("c_name_inscription_type"));
 				inscriptionType.setcDescriptionInscriptionType(resultSet.getString("c_description_inscription_type"));
 				inscriptionType.setcStatusInscriptionType(resultSet.getString("c_status_inscription_type"));
-				
+
 				inscriptionTypes.add(inscriptionType);
 			}
 			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (resultSet != null)
+					resultSet.close();
+				if (preparedStatement != null)
+					preparedStatement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return inscriptionTypes;
 	}

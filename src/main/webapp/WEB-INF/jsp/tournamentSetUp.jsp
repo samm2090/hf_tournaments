@@ -21,7 +21,7 @@
 		<div class="row">
 			<div class="col-md-2">${tournament.tournamentData.cNameTournament}</div>
 			<div class="col-md-2 col-md-offset-8">
-				<button type="button" class="btn btn-default">Guardar</button>
+				<button type="button" class="btn btn-default btnSave">Guardar</button>
 			</div>
 		</div>
 		<div class="row">
@@ -29,7 +29,7 @@
 				<div class="row">
 					<div class="col-md-7">Visible para el público:</div>
 					<div class="col-md-5">
-						<select class="form-control">
+						<select class="form-control" id="cStatusTournament">
 							<option value="visible"
 								${tournament.tournamentData.cStatusTournament == 'visible' ? 'selected' : '' }>Sí</option>
 							<option value="hidden"
@@ -43,13 +43,13 @@
 		</div>
 		<div class="row">
 			<div class="col-md-2">Presentación (*):</div>
-			<div class="col-md-10">
+			<div class="col-md-10" id="cPresentationtxtTournament">
 				<textarea class="form-control" rows="3">${tournament.tournamentData.cPresentationtxtTournament}</textarea>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-4">
-				<select class="form-control">
+				<select class="form-control" id="nIdTeamPlayer">
 					<c:forEach items="${teamPlayerOptions}" var="teamPlayer">
 						<option value="${teamPlayer.teamPlayerId}"
 							${tournament.tournamentData.nIdTeamPlayer == teamPlayer.teamPlayerId ? 'selected':''}>${teamPlayer.name}</option>
@@ -57,7 +57,7 @@
 				</select>
 			</div>
 			<div class="col-md-4">
-				<select class="form-control">
+				<select class="form-control" id="nIdFootballCategory">
 					<c:forEach items="${footballCategories}" var="footballCategory">
 						<option value="${footballCategory.footballCategoryId}"
 							${tournament.tournamentData.nIdFootballCategory == footballCategory.footballCategoryId ? 'selected':''}>${footballCategory.name}</option>
@@ -65,7 +65,7 @@
 				</select>
 			</div>
 			<div class="col-md-4">
-				<select class="form-control">
+				<select class="form-control" id="nIdSex">
 					<option value="1"
 						${tournament.tournamentData.nIdSex == '1' ? 'selected' : '' }>Masculino</option>
 					<option value="2"
@@ -76,24 +76,36 @@
 		<div class="row">
 			<div class="col-md-6">
 				Incio:<input type="text" class="form-control"
+					id="dDateTournamentStart"
 					value="${tournament.tournamentData.dDateTournamentStart}">
 			</div>
 			<div class="col-md-6">
 				Fin:<input type="text" class="form-control"
+					id="dDateTournamentFinish"
 					value="${tournament.tournamentData.dDateTournamentFinish}">
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-6">
-				<input type="text" class="form-control" placeholder="Cancha (*)">
+				<select class="form-control" id="complexId">
+					<c:forEach items="${complexes}" var="complex">
+						<option value="${complex.complexId}"
+							${tournament.tournamentData.cSpecificfieldTournament == complex.complexId ? 'selected':''}>${complex.name}</option>
+					</c:forEach>
+				</select>
 			</div>
 			<div class="col-md-6">
-				<input type="text" class="form-control" placeholder="Distrito (*)">
+				<select class="form-control" id="nIdCityFieldTournament">
+					<c:forEach items="${cities}" var="city">
+						<option value="${city.cityId}"
+							${tournament.tournamentData.nIdCityFieldTournament == city.cityId ? 'selected':''}>${city.cityName}</option>
+					</c:forEach>
+				</select>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-6">
-				<select class="form-control">
+				<select class="form-control" id="nIdFieldType">
 					<c:forEach items="${fieldTypes}" var="fieldType">
 						<option value="${fieldType.fieldTypeId}"
 							${tournament.tournamentData.nIdFieldType == fieldType.fieldTypeId ? 'selected':''}>${fieldType.fieldTypeName}</option>
@@ -102,6 +114,7 @@
 			</div>
 			<div class="col-md-6">
 				Cantidad de Cupos:<input type="text" class="form-control"
+					id="numberofparticipantstournament"
 					value="${tournament.tournamentData.numberofparticipantstournament}">
 			</div>
 		</div>
@@ -113,33 +126,42 @@
 				<div class="row">
 					<div class="col-md-3">Cuota:</div>
 					<div class="col-md-3">
-						<select class="form-control">
-							<option>Por Equipo</option>
+						<select class="form-control" id="nIdInscriptionType">
+							<c:forEach items="${inscriptionTypes}" var="inscriptionType">
+								<option value="${inscriptionType.nIdInscriptionType}"
+									${tournament.tournamentData.nIdInscriptionType == inscriptionType.nIdInscriptionType ? 'selected':''}>${inscriptionType.cNameInscriptionType}</option>
+							</c:forEach>
 						</select>
 					</div>
 					<div class="col-md-3">
-						<input type="text" class="form-control" placeholder="S/."
+						<input type="text" class="form-control" placeholder="S/." id="cPriceTeam"
 							value="${tournament.tournamentData.cPriceTeam}">
 					</div>
 					<div class="col-md-3">
-						<select class="form-control">
-							<option>Sin IGV</option>
+						<select class="form-control" id="cIsIncludeTax">
+							<option value="yes"
+								${tournament.tournamentData.cIsIncludeTax == 'yes' ? 'selected':''}>Si</option>
+							<option value="no"
+								${tournament.tournamentData.cIsIncludeTax == 'no' ? 'selected':''}>No</option>
+							<option value="hidden"
+								${tournament.tournamentData.cIsIncludeTax == 'hidden' ? 'selected':''}>No
+								mostrar</option>
 						</select>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-6">
-				Correo: <input type="text" class="form-control"
+				Correo: <input type="text" class="form-control" id="cEmailTournament"
 					value="${tournament.tournamentData.cEmailTournament}">
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-6">
 				Texto Promocional (*):
-				<textarea class="form-control" rows="3">${tournament.tournamentData.cInscriptionPaymentAdditionalText}</textarea>
+				<textarea class="form-control" rows="3" id="cInscriptionPaymentAdditionalText">${tournament.tournamentData.cInscriptionPaymentAdditionalText}</textarea>
 			</div>
 			<div class="col-md-6">
-				Teléfonos:<input type="text" class="form-control"
+				Teléfonos:<input type="text" class="form-control" id="cPhoneTournament"
 					value="${tournament.tournamentData.cPhoneTournament}"><br>
 				Página Web (*):<input type="text" class="form-control"
 					value="${tournament.tournamentData.cWebpageTournament}">
@@ -148,22 +170,22 @@
 		<div class="row">
 			<div class="col-md-6">
 				Premios (*):
-				<textarea class="form-control" rows="3">${tournament.tournamentData.cPremiostxtTournament}</textarea>
+				<textarea class="form-control" rows="3" id="cPremiostxtTournament">${tournament.tournamentData.cPremiostxtTournament}</textarea>
 			</div>
 			<div class="col-md-6">
 				Fechas y horarios (*):
-				<textarea class="form-control" rows="3">${tournament.tournamentData.cFechastxtTournament}</textarea>
+				<textarea class="form-control" rows="3" id="cDayScheduleTournament">${tournament.tournamentData.cDayScheduleTournament}</textarea>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
 				Información Adicional(*):
-				<textarea class="form-control" rows="5">${tournament.tournamentData.cAdditionaltxtTournament}</textarea>
+				<textarea class="form-control" rows="5" id="cAdditionaltxtTournament">${tournament.tournamentData.cAdditionaltxtTournament}</textarea>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-1 pull-right">
-				<button type="button" class="btn btn-default">Guardar</button>
+				<button type="button" class="btn btn-default btnSave">Guardar</button>
 			</div>
 		</div>
 		<div class="row">
@@ -178,5 +200,6 @@
 	<script src="resources/js/tournamentSetUp.js" type="text/javascript"></script>
 	<script src="resources/js/tournamentSetUpMenu.js"
 		type="text/javascript"></script>
+
 </body>
 </html>

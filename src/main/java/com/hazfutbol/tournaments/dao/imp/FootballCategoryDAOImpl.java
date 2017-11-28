@@ -16,14 +16,18 @@ public class FootballCategoryDAOImpl implements FootballCategoryDAO {
 	@Override
 	public List<FootballCategory> listFootballCatogories() {
 
-		Connection connection = MySqlConnection.getConnection();
+		Connection connection = null;
+		ResultSet resultSet = null;
+		PreparedStatement preparedStatement = null;
 		List<FootballCategory> footballCategories = null;
 
 		try {
+			connection = MySqlConnection.getConnection();
+
 			String query = "SELECT football_category_id, name " + "FROM hf_football_category;";
 
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement = connection.prepareStatement(query);
+			resultSet = preparedStatement.executeQuery();
 
 			footballCategories = new ArrayList<>();
 			while (resultSet.next()) {
@@ -36,6 +40,17 @@ public class FootballCategoryDAOImpl implements FootballCategoryDAO {
 			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (resultSet != null)
+					resultSet.close();
+				if (preparedStatement != null)
+					preparedStatement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return footballCategories;
 	}
