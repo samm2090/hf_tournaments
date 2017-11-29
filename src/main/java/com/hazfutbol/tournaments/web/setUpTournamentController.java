@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hazfutbol.tournaments.bean.Tournament;
-import com.hazfutbol.tournaments.bean.TournamentPhase;
 import com.hazfutbol.tournaments.service.TournamentManagerService;
 import com.hazfutbol.tournaments.service.TournamentService;
 
@@ -43,10 +42,12 @@ public class setUpTournamentController {
 
 	@RequestMapping(value = "/saveTournamentPhases", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> saveTournamentPhases(@RequestBody List<TournamentPhase> phases,
-			@RequestBody List<Map<String, Object>> tournamentPhases, HttpServletRequest request) {
+	public Map<String, Object> saveTournamentPhases(@RequestBody Map<String, Object> data,
+			HttpServletRequest request) {
 		Map<String, Object> message = new HashMap<>();
-
+		
+		@SuppressWarnings("unchecked")
+		List<Map<String,Object>> tournamentPhases = (List<Map<String, Object>>) data.get("tournamentPhases");
 		int rowsUpdated = tournamentManagerService.saveTournamentPhases(tournamentPhases);
 		if (rowsUpdated > 0) {
 			message.put("rowsUpdated", rowsUpdated);

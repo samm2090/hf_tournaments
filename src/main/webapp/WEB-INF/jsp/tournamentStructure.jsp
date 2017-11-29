@@ -21,21 +21,23 @@
 		<div class="row">
 			<div class="col-md-2">Estructura</div>
 			<div class="col-md-2 col-md-offset-8">
-				<button type="button" class="btn btn-default">Guardar</button>
+				<button type="button" class="btn btn-default btnSave">Guardar</button>
 			</div>
 		</div>
 		<div id="divPhases" class="row">
-			<div class="col-md-12">
-				<c:forEach items="${tournamentPhases}" var="tournamentPhase">
+
+			<c:forEach items="${tournamentPhases}" var="tournamentPhase">
+				<div class="col-md-12 divPhase">
 					<div class="row">
 						<span class="nIdPhaseTournament" style="display: none;">${tournamentPhase.phase.nIdPhaseTournament}</span>
+						<span class="nIdStage" style="display: none;">${tournamentPhase.phase.nIdStage}</span>
 						<div class="col-md-2 col-md-offset-1">
 							Fase ${tournamentPhase.phase.nIndexPhaseByTournament}: <input
 								type="text" class="form-control cNamePhaseTournament"
 								value="${tournamentPhase.phase.cNamePhaseTournament}">
 						</div>
 						<div class="col-md-2">
-							Modalidad: <select class="form-control" class="stageType">
+							Modalidad: <select class="form-control stageType">
 								<option value="1"
 									${tournamentPhase.stageType == 1 ? 'selected' : ''}>Grupos</option>
 								<option value="2"
@@ -43,17 +45,16 @@
 							</select>
 						</div>
 						<div class="col-md-2">
-							# Equipos: <input type="text" class="form-control"
-								class="nQuantityTeams"
-								value="${tournamentPhase.phase.nQuantityGroupsPhase * tournamentPhase.phase.nQuantityTeamsByGroupPhase}">
+							# Equipos: <input type="text" class="form-control nQuantityTeams"
+								value="${tournamentPhase.phase.nQuantityTeams != '' ? tournamentPhase.phase.nQuantityTeams : tournamentPhase.phase.nQuantityGroupsPhase * tournamentPhase.phase.nQuantityTeamsByGroupPhase}">
 						</div>
 						<div class="col-md-2">
-							# Clasificados:<input type="text" class="form-control"
-								class="nQuantityWinnersPhase"
+							# Clasificados:<input type="text"
+								class="form-control nQuantityWinnersPhase"
 								value="${tournamentPhase.phase.nQuantityWinnersPhase}">
 						</div>
 						<div class="col-md-1">
-							Arrastra Tarjetas? <select class="form-control" class="dragCards">
+							Arrastra Tarjetas? <select class="form-control dragCards">
 								<option value="no"
 									${tournamentPhase.dragCards == 'no' ? 'selected' : ''}>No</option>
 								<option value="yes"
@@ -61,8 +62,8 @@
 							</select>
 						</div>
 						<div class="col-md-1">
-							Arrastra Suspensiones? <select class="form-control"
-								class="dragSuspensions">
+							Arrastra Suspensiones? <select
+								class="form-control dragSuspensions">
 								<option value="no"
 									${tournamentPhase.dragSuspensions == 'no' ? 'selected' : ''}>No</option>
 								<option value="yes"
@@ -73,14 +74,14 @@
 					<div class="row">
 						<div class="col-md-12">
 							Comentario (*):
-							<textarea class="form-control" rows="3" class="cDescriptionPhase">${tournamentPhase.phase.cDescriptionPhase}</textarea>
+							<textarea class="form-control cDescriptionPhase" rows="3">${tournamentPhase.phase.cDescriptionPhase}</textarea>
 						</div>
 					</div>
 					<script type="text/javascript">
 						var lastPhase = ${tournamentPhase.phase.nIndexPhaseByTournament};
 					</script>
-				</c:forEach>
-			</div>
+				</div>
+			</c:forEach>
 		</div>
 		<div class="row">
 			<div class="col-md-12 ">

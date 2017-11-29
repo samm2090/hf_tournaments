@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.hazfutbol.tournaments.bean.TournamentPhase;
 import com.hazfutbol.tournaments.dao.TournamentPhaseDAO;
 import com.hazfutbol.tournaments.util.MySqlConnection;
@@ -84,56 +86,80 @@ public class TournamentPhaseDAOImpl implements TournamentPhaseDAO {
 	public int saveTournamentPhases(List<Map<String, Object>> tournamentPhases) {
 
 		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement1 = null;
+		PreparedStatement preparedStatement2 = null;
+		PreparedStatement preparedStatement3 = null;
 		int rowsUpdated = 0;
-
+		// n_quantity_groups_phase=?, n_quantity_teams_by_group_phase=?,
 		try {
 			connection = MySqlConnection.getConnection();
-			String query = "UPDATE hf_phase_tournament "
-					+ "SET c_name_phase_tournament=?, n_quantity_groups_phase=?, n_quantity_teams_by_group_phase=?, "
-					+ "n_quantity_teams=?, c_description_phase=?" + "n_quantity_winners_phase=?, "
-					+ "d_date_update_phase_tournament=? " + "WHERE n_id_phase_tournament=?; "
+			connection.setAutoCommit(false);
+			String query1 = "UPDATE hf_phase_tournament " + "SET c_name_phase_tournament=?, "
+					+ "n_quantity_teams=?, c_description_phase=?, n_quantity_winners_phase=?, "
+					+ "d_date_update_phase_tournament=? " + "WHERE n_id_phase_tournament=?; ";
 
-					+ "UPDATE hf_tournament_stage " + "SET n_id_stage_type=?, d_date_update_stage=? "
-					+ "WHERE n_id_stage=?;"
+			String query2 = "UPDATE hf_tournament_stage " + "SET n_id_stage_type=?, d_date_update_stage=? "
+					+ "WHERE n_id_stage=?;";
 
-					+ "UPDATE hf_tournament_policy_phase "
+			String query3 = "UPDATE hf_tournament_policy_phase "
 					+ "SET c_drag_cards=?, c_drag_suspensions=?, d_date_update_policy_phase=? "
 					+ "WHERE n_id_phase_tournament=?;";
 
+			preparedStatement1 = connection.prepareStatement(query1);
+			preparedStatement2 = connection.prepareStatement(query2);
+			preparedStatement3 = connection.prepareStatement(query3);
 			Date today = new Date();
-
-			preparedStatement = connection.prepareStatement(query);
+			Gson gson = new Gson();
 			for (Map<String, Object> tournamentPhase : tournamentPhases) {
-				TournamentPhase phase = (TournamentPhase) tournamentPhase.get("phase");
 
-				preparedStatement.setString(1, phase.getcNamePhaseTournament());
-				preparedStatement.setInt(2, phase.getnQuantityGroupsPhase());
-				preparedStatement.setInt(3, phase.getnQuantityTeamsByGroupPhase());
-				preparedStatement.setInt(4, phase.getnQuantityTeams());
-				preparedStatement.setString(5, phase.getcDescriptionPhase());
-				preparedStatement.setInt(6, phase.getnQuantityWinnersPhase());
-				preparedStatement.setDate(7, new java.sql.Date(today.getTime()));
-				preparedStatement.setInt(8, phase.getnIdPhaseTournament());
-				
-				preparedStatement.setInt(9,(int) tournamentPhase.get("stageType"));
-				preparedStatement.setDate(10, new java.sql.Date(today.getTime()));
+				JsonElement jsonElement = gson.toJsonTree(tournamentPhase.get("phase"));
+				TournamentPhase phase = gson.fromJson(jsonElement, TournamentPhase.class);
 
-				preparedStatement.setInt(11, (int) tournamentPhase.get("dragCards"));
-				preparedStatement.setInt(12, (int) tournamentPhase.get("dragSuspensions"));
-				preparedStatement.setDate(13, new java.sql.Date(today.getTime()));
-				preparedStatement.setInt(14, phase.getnIdPhaseTournament());
-				rowsUpdated += preparedStatement.executeUpdate();
+				@SuppressWarnings("unchecked")
+				Map<String, Object> extraData = (Map<String, Object>) tournamentPhase.get("extraData");
+
+				preparedStatement1.setString(1, phase.getcNamePhaseTournament());
+				preparedStatement1.setInt(2, phase.getnQuantityTeams());
+				preparedStatement1.setString(3, phase.getcDescriptionPhase());
+				preparedStatement1.setInt(4, phase.getnQuantityWinnersPhase());
+				preparedStatement1.setDate(5, new java.sql.Date(today.getTime()));
+				preparedStatement1.setInt(6, phase.getnIdPhaseTournament());
+				preparedStatement1.addBatch();
+
+				preparedStatement2.setInt(1, Integer.valueOf(extraData.get("stageType").toString()));
+				preparedStatement2.setDate(2, new java.sql.Date(today.getTime()));
+				preparedStatement2.setInt(3, phase.getnIdStage());
+				preparedStatement2.addBatch();
+
+				preparedStatement3.setString(1, extraData.get("dragCards").toString());
+				preparedStatement3.setString(2, extraData.get("dragSuspensions").toString());
+				preparedStatement3.setDate(3, new java.sql.Date(today.getTime()));
+				preparedStatement3.setInt(4, phase.getnIdPhaseTournament());
+				preparedStatement3.addBatch();
+
 			}
+			rowsUpdated += preparedStatement1.executeBatch().length;
+			rowsUpdated += preparedStatement2.executeBatch().length;
+			rowsUpdated += preparedStatement3.executeBatch().length;
 
+			connection.commit();
 		}
 
 		catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		} finally {
 			try {
-				if (preparedStatement != null)
-					preparedStatement.close();
+				if (preparedStatement1 != null)
+					preparedStatement1.close();
+				if (preparedStatement2 != null)
+					preparedStatement2.close();
+				if (preparedStatement3 != null)
+					preparedStatement3.close();
 				if (connection != null)
 					connection.close();
 			} catch (SQLException e) {

@@ -66,14 +66,70 @@ function initEvents() {
 }
 
 function saveStructure() {
-	var nIdPhaseTournament = $('.nIdPhaseTournament').val();
-	var cNamePhaseTournament = $('.cNamePhaseTournament');
-	$('.stageType').val();
-	$('.nQuantityTeams').val();
-	$('.nQuantityWinnersPhase').val();
-	$('.dragCards').val();
-	$('.dragSuspensions').val();
-	$('.cDescriptionPhase').val();
+	var $divPhase = $('.divPhase');
+	var tournamentPhases = [];
 
-	console.log(cNamePhaseTournament);
+	$
+			.each($divPhase,
+					function(i, div) {
+						var $phase = $(div);
+
+						var nIdPhaseTournament = $phase.find(
+								'.nIdPhaseTournament').html();
+						var nIdStage = $phase.find('.nIdStage').html();
+						var cNamePhaseTournament = $phase.find(
+								'.cNamePhaseTournament').val();
+						var stageType = $phase.find(
+								'.stageType option:selected').val();
+						var nQuantityTeams = $phase.find('.nQuantityTeams')
+								.val();
+						var nQuantityWinnersPhase = $phase.find(
+								'.nQuantityWinnersPhase').val();
+						var dragCards = $phase.find(
+								'.dragCards option:selected').val();
+						var dragSuspensions = $phase.find(
+								'.dragSuspensions option:selected').val();
+						var cDescriptionPhase = $phase.find(
+								'.cDescriptionPhase').val();
+
+						var phase = {
+							'nIdPhaseTournament' : nIdPhaseTournament,
+							'nIdStage' : nIdStage,
+							'cNamePhaseTournament' : cNamePhaseTournament,
+							'nQuantityTeams' : nQuantityTeams,
+							'nQuantityWinnersPhase' : nQuantityWinnersPhase,
+							'cDescriptionPhase' : cDescriptionPhase
+						};
+
+						var extraData = {
+							'stageType' : stageType,
+							'dragCards' : dragCards,
+							'dragSuspensions' : dragSuspensions
+						};
+
+						var tournamentPhase = {
+							'phase' : phase,
+							'extraData' : extraData
+						}
+
+						tournamentPhases.push(tournamentPhase);
+					});
+
+	var successCallBack = function(json) {
+		alert(json.message);
+	};
+
+	var errorCallback = function(a, b, c) {
+		alert('Hubo en error');
+		console.log(a);
+		console.log(b);
+		console.log(c);
+	};
+
+	var data = {
+		'tournamentPhases' : tournamentPhases
+	}
+
+	ajaxCall('setUpTournament/saveTournamentPhases', 'POST', data,
+			successCallBack, errorCallback);
 }
