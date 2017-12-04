@@ -1,9 +1,10 @@
 package com.hazfutbol.tournaments.dao;
 
-import java.util.List;
-
 import com.hazfutbol.tournaments.bean.TournamentPolicyScore;
 
 public interface TournamentPolicyScoreDAO {
-	List<TournamentPolicyScore> listTournamentScorePolicies(int nIdTournament);
+	TournamentPolicyScore tournamentScorePolicies(int nIdTournament);
+
+	int saveTournamentPolicyScore(TournamentPolicyScore tournamentPolicyScore);
+
 }

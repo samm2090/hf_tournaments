@@ -1,5 +1,6 @@
 package com.hazfutbol.tournaments.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +19,13 @@ import com.hazfutbol.tournaments.bean.FieldType;
 import com.hazfutbol.tournaments.bean.FootballCategory;
 import com.hazfutbol.tournaments.bean.InscriptionType;
 import com.hazfutbol.tournaments.bean.TeamPlayer;
+import com.hazfutbol.tournaments.bean.TournamentPolicyFault;
+import com.hazfutbol.tournaments.bean.TournamentPolicyPlaydown;
+import com.hazfutbol.tournaments.bean.TournamentPolicyScore;
 import com.hazfutbol.tournaments.service.TournamentManagerService;
 import com.hazfutbol.tournaments.service.TournamentService;
 
-@Controller																																				
+@Controller
 public class tournamentController {
 
 	TournamentManagerService tournamentManagerService = new TournamentManagerService();
@@ -41,7 +45,7 @@ public class tournamentController {
 			HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
 		request.getSession().setAttribute("nIdTournament", nIdTournament);
-		
+
 		Map<String, Object> tournament = tournamentService.tournamentInformation(nIdTournament);
 		List<TeamPlayer> teamPlayerOptions = tournamentService.listTeamPlayerOptions();
 		List<FootballCategory> footballCategories = tournamentService.listFootballCatogories();
@@ -49,7 +53,7 @@ public class tournamentController {
 		List<InscriptionType> inscriptionTypes = tournamentService.listInscriptionTypes();
 		List<Complex> complexes = tournamentService.listComplexes();
 		List<City> cities = tournamentService.listCities();
-		
+
 		modelAndView.setViewName("tournamentSetUp");
 		modelAndView.addObject("tournament", tournament);
 		modelAndView.addObject("teamPlayerOptions", teamPlayerOptions);
@@ -58,7 +62,7 @@ public class tournamentController {
 		modelAndView.addObject("inscriptionTypes", inscriptionTypes);
 		modelAndView.addObject("complexes", complexes);
 		modelAndView.addObject("cities", cities);
-		
+
 		return modelAndView;
 	}
 
@@ -86,18 +90,30 @@ public class tournamentController {
 	@RequestMapping(value = "/tournamentStructure", method = RequestMethod.GET)
 	public ModelAndView tournamentStructure(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
-		int nIdTournament =(int) request.getSession().getAttribute("nIdTournament");
+		int nIdTournament = (int) request.getSession().getAttribute("nIdTournament");
 		List<Map<String, Object>> tournamentPhases = tournamentService.listPhasesByTornament(nIdTournament);
-		
+
 		modelAndView.setViewName("tournamentStructure");
 		modelAndView.addObject("tournamentPhases", tournamentPhases);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/tournamentBasicParameters", method = RequestMethod.GET)
-	public ModelAndView tournamentBasicParameters() {
+	public ModelAndView tournamentBasicParameters(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView();
+		int nIdTournament = (int) request.getSession().getAttribute("nIdTournament");
+		TournamentPolicyFault tournamentPolicyFault = tournamentManagerService.tournamentFaultPolicies(nIdTournament);
+		TournamentPolicyScore tournamentPolicyScore = tournamentManagerService.tournamentScorePolicies(nIdTournament);
+		List<TournamentPolicyPlaydown>tournamentPolicyPlaydowns = tournamentManagerService.listTournamentPlaydownPolicies(nIdTournament);
+		
+		Map<String, Object> playdownPolicy = new HashMap<>();
+		for(TournamentPolicyPlaydown policy:tournamentPolicyPlaydowns){
+			playdownPolicy.put("playdownPolicy" + policy.getnIdPolicyMatchPlaydownType(), policy);
+		}
 		modelAndView.setViewName("tournamentBasicParameters");
+		modelAndView.addObject("tournamentPolicyScore", tournamentPolicyScore);
+		modelAndView.addObject("tournamentPolicyFault", tournamentPolicyFault);
+		modelAndView.addObject("playdownPolicy", playdownPolicy);
 		return modelAndView;
 	}
 
